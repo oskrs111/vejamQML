@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>loginScreen.qml</file>
+        <file>alert.qml</file>
+        <file>liveScreen.qml</file>
+        <file>res/ipDefault.png</file>
+    </qresource>
+</RCC>
