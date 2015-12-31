@@ -4,7 +4,7 @@ QT += qml quick multimedia
 
 SOURCES += main.cpp \
     qmlinterface.cpp \
-    qtkApplicationParameters/qtkapplicationparameters.cpp \
+    ./../qtkApplicationParameters/qtkapplicationparameters.cpp \
     qtkVideoServer/qtkCaptureBuffer.cpp \
     qtkVideoServer/qtkVideoServer.cpp \
     qtkImageProvider/qtkImageProvider.cpp
@@ -28,7 +28,7 @@ DISTFILES += \
     android/gradlew.bat
 
 INCLUDEPATH += qtkVideoServer \
-            qtkApplicationParameters \
+            ./../qtkApplicationParameters \
             qtkImageProvider
 
 
@@ -36,8 +36,9 @@ HEADERS += \
     qmlinterface.h \
     qtkVideoServer/qtkCaptureBuffer.h \
     qtkVideoServer/qtkVideoServer.h \
-    qtkApplicationParameters/qtkapplicationparameters.h \
+    ./../qtkApplicationParameters/qtkapplicationparameters.h \
     main.h \
-    qtkImageProvider/qtkImageProvider.h
+    qtkImageProvider/qtkImageProvider.h \
+    qtkVideoServer/qtkVideoFilter.h
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

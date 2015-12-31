@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     if(servicesStart())
     //OSLL: Tot ok!
     {
+        qmlRegisterType<qtkVideoFilter>("qtkvideofilter.uri", 1, 0, "qtkVideoFilter");
         gVideoServer = new QtkVideoServer(gParams, 0);
         if(gVideoServer->loadAvaliableCameras())
         {
@@ -43,6 +44,9 @@ int main(int argc, char *argv[])
         {
             QCamera* cam = qvariant_cast<QCamera*>(gInterface->getQmlCamera()->property("mediaObject"));
             gVideoServer->setCameraDevice(cam);
+
+
+
             gVideoServer->startServer();
             gInterface->setVideoSource(gVideoServer);
             gInterface->setImageProvider(gImageProvider);
