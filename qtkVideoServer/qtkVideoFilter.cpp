@@ -35,7 +35,7 @@ QVideoFrame qtkVideoFilterRunable::run(QVideoFrame *input, const QVideoSurfaceFo
         tFrame.unmap();
     }
     this->m_mutexA.unlock();
-    this->p_parent->frameUpdated(this->m_currentFrame);
+    this->p_parent->frameUpdated(this->m_currentFrame.copy(QRect()));
     return *input;
 }
 

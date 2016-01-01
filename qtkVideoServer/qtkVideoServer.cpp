@@ -12,9 +12,9 @@ QtkVideoServer::QtkVideoServer(QtKApplicationParameters *params, QObject *parent
     this->m_camera = 0;
     this->m_videoFilter = 0;
     this->m_appParameters = params;
-    this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirrorSetting")).toInt();
-    this->m_widthScale = this->loadParam(QString("video"),QString("widthScale")).toInt();
-    this->m_scaleMode = this->loadParam(QString("video"),QString("scaleMode")).toInt();
+    this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirror-setting")).toInt();
+    this->m_widthScale = this->loadParam(QString("video"),QString("resolucion-x")).toInt();
+    this->m_scaleMode = this->loadParam(QString("video"),QString("scale-mode")).toInt();
 }
 
 void QtkVideoServer::setVideoFilter(qtkVideoFilter* videoFilter)
@@ -72,8 +72,31 @@ int QtkVideoServer::getServerState()
 
 void QtkVideoServer::OnFilterCapturedImage(QImage frame)
 {
+    bool mHor = false;
+    bool mVer = false;
+
+    switch(this->m_mirrorSetting)
+    {
+       case mirrorVertical:
+            mVer = true;
+            break;
+
+       case mirrorHorizontal:
+           mHor = true;
+           break;
+
+       case mirrorAll:
+            mVer = true;
+            mHor = true;
+           break;
+
+       case mirrorNone:
+       default:
+       break;
+    }
+
     m_mutexA.lock();
-    this->m_currentFrame = QImage(frame);
+    this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
     QDateTime time =  QDateTime::currentDateTime();
     this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
     this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
@@ -85,7 +108,7 @@ QImage QtkVideoServer::currentFrame2Image()
 {
     QImage lastFrame;
     m_mutexA.lock();
-    lastFrame = this->m_currentFrame;
+    lastFrame = this->m_currentFrame.copy(QRect());
     m_mutexA.unlock();
     return lastFrame;
 }
@@ -95,8 +118,7 @@ QByteArray QtkVideoServer::currentFrame2Base64Jpeg()
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
-    m_mutexA.lock();
-		
+    m_mutexA.lock();		
     this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());    
     m_mutexA.unlock();
     buffer.close();
@@ -151,8 +173,6 @@ QString QtkVideoServer::loadParam(QString groupName, QString paramName, quint16 
 
 void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yPos)
 {	
-
-    return;
     QPainter p(img);
 	p.setPen(QPen(Qt::blue));
 	p.setFont(QFont("Times", 14, QFont::Bold));	
