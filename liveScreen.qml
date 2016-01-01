@@ -8,11 +8,12 @@ Rectangle {
     id: liveForm   
     width: 480
     height: 800
+    readonly property real dip: Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
 
-     Grid {
+    Grid {
          id: gridTop
          x: 0
-         height: 50
+         height: 50*dip
          clip: false
          visible: true
          spacing: 0
@@ -26,30 +27,30 @@ Rectangle {
              text: qsTr("VejamQML")
              font.family: "Verdana"
              anchors.top: parent.top
-             anchors.topMargin: 18
+             anchors.topMargin: 18*dip
              anchors.left: parent.left
-             anchors.leftMargin: 19
-             font.pixelSize: 12
+             anchors.leftMargin: 19*dip
+             font.pixelSize: 12*dip
          }
 
          Text {
              id: textStat
              objectName: "text.stat"
              text: qsTr("|")
-             anchors.leftMargin: 13
+             anchors.leftMargin: 13*dip
              anchors.left: textTitle.right
              anchors.top: parent.top
-             anchors.topMargin: 18
+             anchors.topMargin: 18*dip
              font.family: "Verdana"
-             font.pixelSize: 12
+             font.pixelSize: 12*dip
          }
 
 
          Image {
              id: image1
              objectName: "live.image"
-             width: 48
-             height: 48
+             width: 48*dip
+             height: 48*dip
              anchors.right: parent.right
              anchors.rightMargin: 0
              fillMode: Image.Stretch
@@ -61,10 +62,10 @@ Rectangle {
         id: grid
         x: 0
         width: parent.width
-        height: 60
+        height: 60*dip
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: vout.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 10*dip
         spacing: 0
         rows: 1
         columns: 2
@@ -79,7 +80,7 @@ Rectangle {
             Button {
                 id: minimizeButton
                 width: parent.width - 10
-                height: 43
+                height: 43*dip
                 text: qsTr("Hide")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -118,7 +119,7 @@ Rectangle {
 
     VideoOutput{
         id: vout
-        y: 49
+        y: 49*dip
         source: camera
         filters: [qtkFilter]
         width: parent.width

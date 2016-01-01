@@ -14,6 +14,11 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc
 DEFINES += VEJAM_NO_GUI
 
+android {
+QT += androidextras
+DEFINES += ANDROID_PLATFORM
+}
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 

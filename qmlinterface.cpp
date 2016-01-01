@@ -121,7 +121,7 @@ void qmlInterface::onFrameUpdated()
 //    }
 //    m_mutexA.unlock();
 //    qDebug() << "onFrameUpdated()";
-    if(div == 3)
+    if(div == 1)
     {
         this->updateTextState();
         div = 0;

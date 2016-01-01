@@ -53,6 +53,22 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
+#ifdef ANDROID_PLATFORM
+#include <QtAndroidExtras>
+void keepScreenOn()
+{
+    QAndroidJniObject activity = QtAndroid::androidActivity();
+    if (activity.isValid()) {
+        QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+
+        if (window.isValid()) {
+            const int FLAG_KEEP_SCREEN_ON = 128;
+            window.callObjectMethod("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+        }
+    }
+}
+#endif
+
 void loadParams()
 {
     gParams = new QtKApplicationParameters(0,QString("vejam"));
