@@ -3,7 +3,6 @@
 #include <QDebug>
 #include "qmlinterface.h"
 #include "main.h"
-//#include "qtkHttpServer.h"
 #include "qtkImageProvider.h"
 #include "qtkvideoserver.h"
 #include "qtkVideoFilter.h"
