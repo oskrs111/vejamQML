@@ -6,10 +6,13 @@
 //#include "qtkHttpServer.h"
 #include "qtkImageProvider.h"
 #include "qtkvideoserver.h"
+#include "qtkVideoFilter.h"
+#include "qtkHttpServer.h"
 #include "qtkapplicationparameters.h"
 
 QtKApplicationParameters* gParams;
 QtkVideoServer* gVideoServer;
+QtkHttpServer* gHttpServer;
 qmlInterface* gInterface;
 qtkImageProvider* gImageProvider;
 
@@ -18,45 +21,34 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
+
+    qmlRegisterType<qtkVideoFilter>("qtkvideofilter.uri", 1, 0, "VideoFilter");
     gInterface = new qmlInterface();
-
-
-
-
     gImageProvider = new qtkImageProvider(QQmlImageProviderBase::Image);
     gInterface->setEngine(&engine);
-
 
     engine.addImageProvider(QString("imageProvider"),gImageProvider);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     loadParams();
-    if(servicesStart())
-    //OSLL: Tot ok!
-    {
-        qmlRegisterType<qtkVideoFilter>("qtkvideofilter.uri", 1, 0, "qtkVideoFilter");
+
+        gInterface->setImageProvider(gImageProvider);       
         gVideoServer = new QtkVideoServer(gParams, 0);
-        if(gVideoServer->loadAvaliableCameras())
-        {
-            qDebug() << "No hay camaras disponibles?\r\n\r\n";
-        }
-        else
-        {
-            QCamera* cam = qvariant_cast<QCamera*>(gInterface->getQmlCamera()->property("mediaObject"));
-            gVideoServer->setCameraDevice(cam);
+
+        gHttpServer = new QtkHttpServer(gParams->loadParam(QString("conexion"),QString("mjpeg-port"),0).toInt(0,10), 0);
+        gHttpServer->setVideoServer(gVideoServer);
+        gHttpServer->setMaxFramerate(gParams->loadParam(QString("video"),QString("framerate-max"),0).toInt(0,10));
+
+        QCamera* cam = qvariant_cast<QCamera*>(gInterface->getQmlCamera()->property("mediaObject"));
+        gVideoServer->setCamera(cam);
+
+        QObject* filter = gInterface->getQmlVideoFilter();
+        gVideoServer->setVideoFilter((qtkVideoFilter*)filter);
 
 
-
-            gVideoServer->startServer();
-            gInterface->setVideoSource(gVideoServer);
-            gInterface->setImageProvider(gImageProvider);
-            QObject::connect(gVideoServer, SIGNAL(frameUpdated()), gInterface, SLOT(onFrameUpdated()));
-        }
-
-
-    }
-
-
+        gInterface->setVideoSource(gVideoServer);
+        gInterface->setImageProvider(gImageProvider);
+        QObject::connect(gVideoServer, SIGNAL(frameUpdated()), gInterface, SLOT(onFrameUpdated()));
 
     return app.exec();
 }
@@ -73,16 +65,8 @@ void loadParams()
 
 quint8 servicesStart()
 {
-
-
-//    this->m_httpServer = new QtkHttpServer(this->loadParam(QString("conexion"),QString("mjpeg-port")).toInt(0,10), this);
-//    this->m_httpServer->setVideoServer(this->m_videoServer);
-//    this->m_httpServer->setMaxFramerate(this->loadParam(QString("video"),QString("framerate-max")).toInt(0,10));
     return 1;
 }
-//    this->loadAppParameters();
-
-//  this->syncMachine();
 
 void setDefaultParameters()
 {

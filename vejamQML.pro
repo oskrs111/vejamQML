@@ -5,9 +5,11 @@ QT += qml quick multimedia
 SOURCES += main.cpp \
     qmlinterface.cpp \
     ./../qtkApplicationParameters/qtkapplicationparameters.cpp \
-    qtkVideoServer/qtkCaptureBuffer.cpp \
     qtkVideoServer/qtkVideoServer.cpp \
-    qtkImageProvider/qtkImageProvider.cpp
+    qtkImageProvider/qtkImageProvider.cpp \
+    qtkVideoServer/qtkVideoFilter.cpp \
+    ../qtkHttpServer/qtkHttpServer.cpp \
+    ../qtkHttpServer/qtkMjpgStreamer.cpp
 
 RESOURCES += qml.qrc
 DEFINES += VEJAM_NO_GUI
@@ -29,16 +31,20 @@ DISTFILES += \
 
 INCLUDEPATH += qtkVideoServer \
             ./../qtkApplicationParameters \
+            ./../qtkHttpServer \
+            ./../config \
             qtkImageProvider
 
 
 HEADERS += \
     qmlinterface.h \
-    qtkVideoServer/qtkCaptureBuffer.h \
     qtkVideoServer/qtkVideoServer.h \
     ./../qtkApplicationParameters/qtkapplicationparameters.h \
     main.h \
     qtkImageProvider/qtkImageProvider.h \
-    qtkVideoServer/qtkVideoFilter.h
+    qtkVideoServer/qtkVideoFilter.h \
+    ../config/qtkHttpServerConfig.h \
+    ../qtkHttpServer/qtkHttpServer.h \
+    ../qtkHttpServer/qtkMjpgStreamer.h
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

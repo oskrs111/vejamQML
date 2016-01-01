@@ -34,14 +34,6 @@ public:
         return formats;
     }
 
-	enum mirrorConfig
-	{
-		mirrorNone = 0,				
-		mirrorVertical,	
-		mirrorHorizontal,
-		mirrorAll
-	};
-	
 	bool present(const QVideoFrame &frame);	
 	void capture();
 	void setMirrorSetting(int mirrorSetting);

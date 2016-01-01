@@ -4,6 +4,27 @@
         <file>loginScreen.qml</file>
         <file>alert.qml</file>
         <file>liveScreen.qml</file>
-        <file>res/ipDefault.png</file>
+        <file>res/ajax-loader.gif</file>
+        <file>res/vejam_button_back.png</file>
+        <file>res/vejam_button_back-hover.png</file>
+        <file>res/vejam_button_cancel.png</file>
+        <file>res/vejam_button_cancel-hover.png</file>
+        <file>res/vejam_button_settings.png</file>
+        <file>res/vejam_button_settings-hover.png</file>
+        <file>res/vejam_h48_gqfa_1.0.png</file>
+        <file>res/vejam_small_h22_blue.png</file>
+        <file>res/vejam_small_h22_green.png</file>
+        <file>res/vejam_small_h22_red.png</file>
+        <file>res/vejam_small_h22_white.png</file>
+        <file>res/vejam_small_h22_yellow.png</file>
+        <file>res/vejam_small_h64_blue.png</file>
+        <file>res/vejam_small_h64_green.png</file>
+        <file>res/vejam_small_h64_red.png</file>
+        <file>res/vejam_small_h64_white.png</file>
+        <file>res/vejam_small_h64_yellow.png</file>
+        <file>res/vejam_toolbar_h48.ico</file>
+        <file>res/vejam_toolbar_h48.png</file>
+        <file>3w/favicon.ico</file>
+        <file>3w/index.html</file>
     </qresource>
 </RCC>

@@ -28,6 +28,20 @@ void qmlInterface::setImageProvider(qtkImageProvider* imageProvider)
     this->p_imageProvider = imageProvider;
 }
 
+void qmlInterface::updateTextState()
+{
+    static char sym[] = {'|','/','-','\\'};
+    static quint8 index = 0;
+
+    if(this->p_engine)
+    {
+        QList<QObject*> root = this->p_engine->rootObjects();
+        QObject *text = root[0]->findChild<QObject*>(QString("text.stat"));
+        QQmlProperty::write(text, QString("text"), QVariant(QString(sym[index++])), this->p_engine);
+        if(index >= sizeof(sym)) index = 0;
+    }
+}
+
 quint8 qmlInterface::alert(QString message)
 {
     qDebug() << message;
@@ -41,6 +55,19 @@ QObject* qmlInterface::getQmlCamera()
     {
         QList<QObject*> root = this->p_engine->rootObjects();
         QObject *camera = root[0]->findChild<QObject*>(QString("camera.device"));
+        return camera;
+    }
+
+    return 0;
+}
+
+QObject* qmlInterface::getQmlVideoFilter()
+//http://stackoverflow.com/questions/28041741/qt-qml-camera-to-c-qimage-on-android
+{
+    if(this->p_engine)
+    {
+        QList<QObject*> root = this->p_engine->rootObjects();
+        QObject *camera = root[0]->findChild<QObject*>(QString("videoFilter.device"));
         return camera;
     }
 
@@ -83,22 +110,27 @@ void qmlInterface::onLoginButton()
 
 void qmlInterface::onFrameUpdated()
 {
-    return;
-    static qint8 frameId = 0;
-    qDebug() << "onFrameUpdated()";
-    if((this->p_imageProvider != 0) && (this->p_videoSource != 0))
+    static quint8 div = 0;
+//    m_mutexA.lock();
+//    if((this->p_imageProvider != 0) && (this->p_videoSource != 0))
+//    {
+//        this->p_imageProvider->updateImage(this->p_videoSource->currentFrame2Image());
+//        QList<QObject*> root = this->p_engine->rootObjects();
+//        QObject *image = root[0]->findChild<QObject*>(QString("live.image"));
+//        QQmlProperty::write(image, QString("source"), QVariant(QString("image://imageProvider/frame.%1").arg(frameId++)), this->p_engine);
+//    }
+//    m_mutexA.unlock();
+//    qDebug() << "onFrameUpdated()";
+    if(div == 3)
     {
-        this->p_imageProvider->updateImage(this->p_videoSource->currentFrame2Image());
-        QList<QObject*> root = this->p_engine->rootObjects();
-        QObject *image = root[0]->findChild<QObject*>(QString("live.image"));
-        QQmlProperty::write(image, QString("source"), QVariant(QString("image://imageProvider/frame.%1").arg(frameId++)), this->p_engine);
+        this->updateTextState();
+        div = 0;
     }
+    else div++;
+
 }
 
 void qmlInterface::onTimer()
 {
-    if(this->p_videoSource)
-    {
-        this->p_videoSource->Capture();       
-    }
+
 }

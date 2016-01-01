@@ -3,10 +3,13 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.3
 
 ApplicationWindow {
-    id: window1
+    id: mainWindow
+    width: 480
+    height: 800
+    title: qsTr("VejamQML")
+    maximumWidth: 480
+    maximumHeight: 800
     visible: true
-    width: 360
-    height: 480
 
     Loader {
         id: myLoader

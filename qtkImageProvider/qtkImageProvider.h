@@ -2,6 +2,7 @@
 //http://www.lothlorien.com/kf6gpe/?p=234
 #ifndef QTKIMAGEPROVIDER_H
 #define QTKIMAGEPROVIDER_H
+#include <QMutex>
 #include <QQuickImageProvider>
 
 class qtkImageProvider : public QQuickImageProvider
@@ -9,6 +10,7 @@ class qtkImageProvider : public QQuickImageProvider
 
 private:	
 	QImage m_currentImage;
+    QMutex m_mutexA;
 	
 public:
     qtkImageProvider(QQuickImageProvider::ImageType type);

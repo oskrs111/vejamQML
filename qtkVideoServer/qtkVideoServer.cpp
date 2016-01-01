@@ -9,85 +9,23 @@
 QtkVideoServer::QtkVideoServer(QtKApplicationParameters *params, QObject *parent) :
     QObject(parent)
 {
-        this->m_appParameters = params;
-		this->m_camera = 0;
+    this->m_camera = 0;
+    this->m_videoFilter = 0;
+    this->m_appParameters = params;
+    this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirrorSetting")).toInt();
+    this->m_widthScale = this->loadParam(QString("video"),QString("widthScale")).toInt();
+    this->m_scaleMode = this->loadParam(QString("video"),QString("scaleMode")).toInt();
 }
 
-bool QtkVideoServer::loadAvaliableCameras()
+void QtkVideoServer::setVideoFilter(qtkVideoFilter* videoFilter)
 {
-  qint16 order = 1;
-  struct vjCameraDevice camDevice;
-
-  foreach(const QByteArray &deviceName, QCamera::availableDevices())
-  {
-      camDevice.m_name = deviceName;
-      camDevice.m_description =  QCamera::deviceDescription(deviceName);
-
-      qDebug() << "Añade camara: " << deviceName;
-      this->m_devices.append(camDevice);
-      this->saveParam(QString("device"),QString("name"),QString(camDevice.m_name),order);
-      this->saveParam(QString("device"),QString("description"),QString(camDevice.m_description),order);
-	  order++;
-  }
-
-  if(this->m_devices.size())
-  {
-      this->saveParam(QString("device"),QString("qtty"),QString("%1").arg(this->m_devices.size()));      
-      return 0;
-  }
-  return 1;
+    this->m_videoFilter = videoFilter;
+    connect(this->m_videoFilter, SIGNAL(frameReady(QImage)), this, SLOT(OnFilterCapturedImage(QImage)));
 }
 
-void QtkVideoServer::startServer()
-{	
-	this->setCamera(this->m_devices.at(0).m_name);
-	this->m_camera->start();
-	this->m_viewfinder->capture();
-}
-
-void QtkVideoServer::Capture()
+void QtkVideoServer::setCamera(QCamera* camera)
 {
-	this->m_viewfinder->capture();
-}
-
-void QtkVideoServer::setCameraDevice(QCamera* cameraDevice)
-{
-    this->m_camera = cameraDevice;
-}
-
-void QtkVideoServer::setCamera(const QByteArray &cameraDeviceName)
-{    
-    if(this->m_camera == 0)
-    {
-        if (cameraDeviceName.isEmpty())
-        this->m_camera = new QCamera;
-        else
-        this->m_camera = new QCamera(cameraDeviceName);
-    }
-    else
-    {
-       qDebug() << " QtkVideoServer::setCamera->Using external device pointer...";
-    }
-    connect(this->m_camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(OnUpdateCameraState(QCamera::State)));
-    connect(this->m_camera, SIGNAL(error(QCamera::Error)), this, SLOT(OnDisplayCameraError(QCamera::Error)));
-  	
-	
-    this->m_viewfinder = new QtKCaptureBuffer(this);
-	this->m_viewfinder->setMirrorSetting(this->loadParam(QString("video"),QString("mirror-setting")).toInt());
-	this->m_viewfinder->setWidthScale(this->loadParam(QString("video"),QString("resolucion-x")).toInt());
-	this->m_viewfinder->setScaleMode(this->loadParam(QString("video"),QString("scale-mode")).toInt());
-    connect(this->m_viewfinder, SIGNAL(imageCaptured(int,QImage)), this, SLOT(OnProcessCapturedImage(int,QImage)));
-
-    this->m_camera->setViewfinder(this->m_viewfinder);
-    this->m_camera->setCaptureMode(QCamera::CaptureStillImage);
-
-    //OSLL: Traveling to amazing world of multiplatform support...
-    this->m_videoProbe = new QVideoProbe(this);
-    if (this->m_videoProbe->setSource(this->m_camera))
-    {
-        qDebug() << "QtkVideoServer::setCamera->videoProbe= sucess!";
-        connect(this->m_videoProbe, SIGNAL(videoFrameProbed(QVideoFrame)),this, SLOT(OnProbeCapturedImage(QVideoFrame)));
-    }
+    this->m_camera = camera;
 }
 
 int QtkVideoServer::getServerState()
@@ -99,53 +37,48 @@ int QtkVideoServer::getServerState()
     else return 0;
 }
 
-void QtkVideoServer::OnProcessCapturedImage(int id, QImage image)
+//void QtkVideoServer::OnFilterCapturedImage(QImage frame)
+//{
+//    m_mutexA.lock();
+//    QVideoFrame tFrame = frame;
+//    if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
+//    {
+//        if(this->m_widthScale == 0) this->m_widthScale = tFrame.width();
+//        switch(this->m_mirrorSetting)
+//        {
+//            case mirrorVertical:
+//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+//                break;
+
+//            case mirrorHorizontal:
+//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+//                break;
+
+//            case mirrorAll:
+//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+//                break;
+
+//            case mirrorNone:
+//            default:
+//            this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+//            break;
+//        }
+//        tFrame.unmap();
+//    }
+//    m_mutexA.unlock();
+//    emit frameUpdated();
+//    //qDebug() << "QtkVideoServer::OnFilterCapturedImage";
+//}
+
+void QtkVideoServer::OnFilterCapturedImage(QImage frame)
 {
-    Q_UNUSED(id);
     m_mutexA.lock();
-	this->m_currentFrame = image;
-	m_mutexA.unlock();
-    emit frameUpdated();
-}
-
-void QtkVideoServer::OnProbeCapturedImage(QVideoFrame frame)
-{
-    m_mutexA.lock();
-    QVideoFrame tFrame = frame;
-    if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
-    {
-        this->m_currentFrame = QImage(frame.bits(),
-                                      frame.width(),
-                                      frame.height(),
-                                      frame.bytesPerLine(),
-                                      this->m_viewfinder->getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1).scaledToWidth(0, (Qt::TransformationMode)0);
-        /*
-        if(this->m_widthScale == 0) this->m_widthScale = frame.width();
-        switch(this->m_mirrorSetting)
-        {
-            case mirrorVertical:
-                this->m_currentFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-                break;
-
-            case mirrorHorizontal:
-                this->m_currentFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-                break;
-
-            case mirrorAll:
-                this->m_currentFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-                break;
-
-            case mirrorNone:
-            default:
-            this->m_currentFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-            break;
-        }
-*/
-        tFrame.unmap();
-    }
+    this->m_currentFrame = QImage(frame);
+    QDateTime time =  QDateTime::currentDateTime();
+    this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
+    this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
     m_mutexA.unlock();
     emit frameUpdated();
-    qDebug() << "QtkVideoServer::OnProbeCapturedImage";
 }
 
 QImage QtkVideoServer::currentFrame2Image()
@@ -173,12 +106,9 @@ QByteArray QtkVideoServer::currentFrame2Base64Jpeg()
 QByteArray QtkVideoServer::currentFrame2ByteArrayJpeg()
 {
     QByteArray ba;
-    QBuffer buffer(&ba);
-	QDateTime time =  QDateTime::currentDateTime();
+    QBuffer buffer(&ba);	
     buffer.open(QBuffer::WriteOnly);    
-    m_mutexA.lock();
-	this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
-	this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
+    m_mutexA.lock();	
 	this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
     m_mutexA.unlock();
     buffer.close();
@@ -221,8 +151,22 @@ QString QtkVideoServer::loadParam(QString groupName, QString paramName, quint16 
 
 void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yPos)
 {	
-	QPainter p(img);
+
+    return;
+    QPainter p(img);
 	p.setPen(QPen(Qt::blue));
 	p.setFont(QFont("Times", 14, QFont::Bold));	
 	p.drawText(QPoint(xPos, yPos), osdText); 
+}
+
+QImage::Format QtkVideoServer::getQImageFormat(QVideoFrame::PixelFormat format)
+{
+    switch(format)
+    {
+        case QVideoFrame::Format_RGB24: return QImage::Format_RGB888;
+        case QVideoFrame::Format_RGB32: return QImage::Format_RGB32;
+        default: break;
+    }
+
+    return QImage::Format_RGB888;
 }

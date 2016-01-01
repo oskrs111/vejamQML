@@ -29,14 +29,17 @@ public:
     void setEngine(QQmlApplicationEngine* engine);
     void setVideoSource(QtkVideoServer* videoSource);
     void setImageProvider(qtkImageProvider* imageProvider);
+    void updateTextState();
 
     QObject* getQmlCamera();
+    QObject* getQmlVideoFilter();
 
 private:
     QQmlApplicationEngine* p_engine;
     QtkVideoServer* p_videoSource;
     qtkImageProvider* p_imageProvider;
     QTimer* p_timer;
+    QMutex m_mutexA;
     quint8 alert(QString message);
 
 
