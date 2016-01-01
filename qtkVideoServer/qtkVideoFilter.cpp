@@ -22,7 +22,18 @@ QVideoFrame qtkVideoFilterRunable::run(QVideoFrame *input, const QVideoSurfaceFo
 {    
     Q_UNUSED(surfaceFormat);
     Q_UNUSED(flags); 
-    this->m_mutexA.lock();
+    static quint8 frameDropper = 0;
+
+    if(frameDropper == 6)
+    {
+        frameDropper = 0;
+    }
+    else
+    {
+        frameDropper++;
+        return *input;
+    }
+
     QVideoFrame tFrame = *input;
     if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
     {
@@ -31,10 +42,10 @@ QVideoFrame qtkVideoFilterRunable::run(QVideoFrame *input, const QVideoSurfaceFo
                                       tFrame.width(),
                                       tFrame.height(),
                                       tFrame.bytesPerLine(),
-                                      this->qPixel2QImageFormat(tFrame.pixelFormat()));
+                                      this->qPixel2QImageFormat(tFrame.pixelFormat())).copy(QRect());
         tFrame.unmap();
     }
-    this->m_mutexA.unlock();
+    //this->m_mutexA.unlock();
     this->p_parent->frameUpdated(this->m_currentFrame.copy(QRect()));
     return *input;
 }
@@ -45,7 +56,10 @@ QImage::Format qtkVideoFilterRunable::qPixel2QImageFormat(QVideoFrame::PixelForm
     {
         case QVideoFrame::Format_RGB24: return QImage::Format_RGB888;
         case QVideoFrame::Format_RGB32: return QImage::Format_RGB32;
-        default: break;
+        case QVideoFrame::Format_BGR32: return QImage::Format_RGB32;
+        default:
+        qDebug() << "qtkVideoFilterRunable::qPixel2QImageFormat-> Unknown format-> " << format;
+        break;
     }
 
     return QImage::Format_RGB888;

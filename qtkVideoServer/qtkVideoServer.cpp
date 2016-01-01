@@ -96,7 +96,14 @@ void QtkVideoServer::OnFilterCapturedImage(QImage frame)
     }
 
     m_mutexA.lock();
-    this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+    if(this->m_widthScale)
+    {
+        this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
+    }
+    else
+    {
+        this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer);
+    }
     QDateTime time =  QDateTime::currentDateTime();
     this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
     this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
@@ -131,7 +138,7 @@ QByteArray QtkVideoServer::currentFrame2ByteArrayJpeg()
     QBuffer buffer(&ba);	
     buffer.open(QBuffer::WriteOnly);    
     m_mutexA.lock();	
-	this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
+    this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
     m_mutexA.unlock();
     buffer.close();
     return ba;
@@ -177,16 +184,4 @@ void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yP
 	p.setPen(QPen(Qt::blue));
 	p.setFont(QFont("Times", 14, QFont::Bold));	
 	p.drawText(QPoint(xPos, yPos), osdText); 
-}
-
-QImage::Format QtkVideoServer::getQImageFormat(QVideoFrame::PixelFormat format)
-{
-    switch(format)
-    {
-        case QVideoFrame::Format_RGB24: return QImage::Format_RGB888;
-        case QVideoFrame::Format_RGB32: return QImage::Format_RGB32;
-        default: break;
-    }
-
-    return QImage::Format_RGB888;
 }

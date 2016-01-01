@@ -83,10 +83,10 @@ void setDefaultParameters()
     gParams->saveParam(QString("conexion"),QString("webkit-port"),QString("40001"));
     gParams->saveParam(QString("conexion"),QString("mjpeg-port"),QString("50001"));
     gParams->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/stream.html"));
-    gParams->saveParam(QString("video"),QString("resolucion-x"),QString("320"));
+    gParams->saveParam(QString("video"),QString("resolucion-x"),QString("0"));
     gParams->saveParam(QString("video"),QString("scale-mode"),QString("0"));
     gParams->saveParam(QString("video"),QString("calidad"),QString("-1"));
-    gParams->saveParam(QString("video"),QString("framerate-max"),QString("6"));
+    gParams->saveParam(QString("video"),QString("framerate-max"),QString("24"));
     gParams->saveParam(QString("video"),QString("mirror-setting"),QString("0"));
 
     gParams->saveParam(QString("video"),QString("osd-enable"),QString("1"));

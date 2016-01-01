@@ -20,8 +20,7 @@ public:
     void startServer();	
     void Capture();
     int getServerState();
-    void osdTextWrite(QImage* img, QString osdText, int xPos, int yPos);
-    QImage::Format getQImageFormat(QVideoFrame::PixelFormat format);
+    void osdTextWrite(QImage* img, QString osdText, int xPos, int yPos);   
 
     QImage currentFrame2Image();
     QByteArray currentFrame2Base64Jpeg();
