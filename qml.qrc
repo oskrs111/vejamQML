@@ -26,5 +26,12 @@
         <file>res/vejam_toolbar_h48.png</file>
         <file>3w/favicon.ico</file>
         <file>3w/index.html</file>
+        <file>3w/img/menu.png</file>
+        <file>3w/css/main.css</file>
+        <file>res/vejam_toolbar_h32.png</file>
+        <file>3w/js/jquery.min.js</file>
+        <file>3w/js/jquery.min.map</file>
+        <file>3w/js/main.js</file>
+        <file>3w/img/exit-to-app.png</file>
     </qresource>
 </RCC>

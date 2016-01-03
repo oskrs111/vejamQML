@@ -10,7 +10,7 @@ qtkImageProvider::qtkImageProvider(QQuickImageProvider::ImageType type) :
      QQuickImageProvider(type)
 {
     //type -> QQuickImageProvider::Pixmap
-    this->m_currentImage = QImage(":/res/vejam_toolbar_h48.png");
+    this->m_currentImage = QImage(":/res/vejam_toolbar_h32.png");
 }
 
 qtkImageProvider::~qtkImageProvider()

@@ -4,11 +4,12 @@ import QtQuick.Controls 1.3
 
 ApplicationWindow {
     id: mainWindow
-    width: 480
-    height: 800
+    readonly property real _dip: 1//Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
+    width: Screen.desktopAvailableWidth*_dip
+    height: Screen.desktopAvailableHeight*_dip
     title: qsTr("VejamQML")
-    maximumWidth: 480
-    maximumHeight: 800
+    //maximumWidth: 480*_dip
+    //maximumHeight: 800*_dip
     visible: true
 
     Loader {

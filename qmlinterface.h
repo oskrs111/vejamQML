@@ -30,6 +30,7 @@ public:
     void setVideoSource(QtkVideoServer* videoSource);
     void setImageProvider(qtkImageProvider* imageProvider);
     void updateTextState();
+    void writeLog(QString log);
 
     QObject* getQmlCamera();
     QObject* getQmlVideoFilter();

@@ -121,16 +121,29 @@ void qmlInterface::onFrameUpdated()
 //    }
 //    m_mutexA.unlock();
 //    qDebug() << "onFrameUpdated()";
-    if(div == 1)
-    {
-        this->updateTextState();
-        div = 0;
-    }
-    else div++;
+//    if(div == 1)
+//    {
+//        this->updateTextState();
+//        div = 0;
+//    }
+//    else div++;
+      this->updateTextState();
 
 }
 
 void qmlInterface::onTimer()
 {
+
+}
+
+void qmlInterface::writeLog(QString log)
+{
+    QVariant returnedValue;
+    QList<QObject*> root = this->p_engine->rootObjects();
+    QObject *text = root[0]->findChild<QObject*>(QString("text.log"));
+    QMetaObject::invokeMethod(text, "append",
+             Q_RETURN_ARG(QVariant, returnedValue),
+             Q_ARG(QVariant, log));
+
 
 }

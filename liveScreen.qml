@@ -2,13 +2,14 @@ import QtQuick 2.4
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.3
 import QtMultimedia 5.5
+import QtQuick.Controls.Styles 1.4
 import qtkvideofilter.uri 1.0
 
 Rectangle {
-    id: liveForm   
-    width: 480
-    height: 800
-    readonly property real dip: Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
+    id: liveForm
+    readonly property real dip: 1//Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
+    width: Screen.desktopAvailableWidth*_dip
+    height: Screen.desktopAvailableHeight*_dip
 
     Grid {
          id: gridTop
@@ -53,64 +54,10 @@ Rectangle {
              height: 48*dip
              anchors.right: parent.right
              anchors.rightMargin: 0
-             fillMode: Image.Stretch
+             fillMode: Image.Pad
              source: "image://imageProvider/frame.255"
          }
      }
-
-    Grid {
-        id: grid
-        x: 0
-        width: parent.width
-        height: 60*dip
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: vout.bottom
-        anchors.topMargin: 10*dip
-        spacing: 0
-        rows: 1
-        columns: 2
-
-
-
-        Column {
-            id: column1
-            width: (parent.width /2)
-            height: minimizeButton.height + 5
-
-            Button {
-                id: minimizeButton
-                width: parent.width - 10
-                height: 43*dip
-                text: qsTr("Hide")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                //anchors.horizontalCenter: grid2.columns.
-                onClicked:
-                {
-                    qmlInterface.onMinimizeButton();
-                }
-            }
-        }
-
-        Column {
-            id: column2
-            width: column1.width
-            height: column1.height
-
-            Button {
-                id: setupButton
-                width: minimizeButton.width
-                height: minimizeButton.height
-                text: qsTr("Setup")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked:
-                {
-                    qmlInterface.onSetupButton();
-                }
-            }
-        }
-    }
 
     Camera {
         id: camera
@@ -128,8 +75,28 @@ Rectangle {
     }
 
     VideoFilter{
-    id: qtkFilter
-    objectName: "videoFilter.device"
+        id: qtkFilter
+        objectName: "videoFilter.device"
+    }
+
+    TextArea {
+        id: textArea1
+        objectName: "text.log"
+        width: parent.width
+        height: (liveForm.height - vout.height) / 2
+        text: "vejamQML"
+        frameVisible: true
+        textColor: "#2c2121"
+        anchors.top: vout.bottom
+        anchors.topMargin: 0
+        readOnly: true
+        activeFocusOnPress: false
+        font.pixelSize: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        style: TextAreaStyle {
+            backgroundColor: "#ffffff"
+        }
     }
 
 }

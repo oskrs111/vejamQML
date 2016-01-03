@@ -20,7 +20,7 @@ public:
     void startServer();	
     void Capture();
     int getServerState();
-    void osdTextWrite(QImage* img, QString osdText, int xPos, int yPos);   
+    void osdTextWrite(QImage* img, QString osdText, int xPos, int yPos, QFont font, QPen pen);
 
     QImage currentFrame2Image();
     QByteArray currentFrame2Base64Jpeg();
@@ -35,9 +35,24 @@ public:
     };
 
 private:
+//OSLL: Variables for settings
     int m_mirrorSetting;
     int m_widthScale;
     int m_scaleMode;
+    int m_videoQuality;
+    int m_frameDrop;
+    int m_streamAliasXpos;
+    int m_streamAliasYpos;
+    int m_streamAliasShowTitle;
+    int m_streamAliasShowTime;
+    int m_streamAliasFontSize;
+    int m_streamAliasFontWeight;
+    int m_streamAliasFontColor;
+    QString m_streamAlias;
+    QString m_streamAliasFont;
+    void loadSettings();
+//OSLL: Variables for settings - END
+
     QImage m_currentFrame;
     QMutex m_mutexA;    
     QCamera* m_camera;

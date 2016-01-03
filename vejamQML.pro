@@ -9,14 +9,17 @@ SOURCES += main.cpp \
     qtkImageProvider/qtkImageProvider.cpp \
     qtkVideoServer/qtkVideoFilter.cpp \
     ../qtkHttpServer/qtkHttpServer.cpp \
-    ../qtkHttpServer/qtkMjpgStreamer.cpp
+    ../qtkHttpServer/qtkMjpgStreamer.cpp \
+    ../qtkHttpServer/qtkJsRpcServer.cpp \
+    ../qtkHttpServer/qtkRtpCommand_.cpp
 
+RC_ICONS = res/vejam_toolbar_h48.ico
 RESOURCES += qml.qrc
 DEFINES += VEJAM_NO_GUI
 
 android {
 #QT += androidextras
-#DEFINES += ANDROID_PLATFORM
+DEFINES += ANDROID_PLATFORM
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -38,6 +41,7 @@ INCLUDEPATH += qtkVideoServer \
             ./../qtkApplicationParameters \
             ./../qtkHttpServer \
             ./../config \
+            ./../rpcCommands \
             qtkImageProvider
 
 
@@ -50,6 +54,13 @@ HEADERS += \
     qtkVideoServer/qtkVideoFilter.h \
     ../config/qtkHttpServerConfig.h \
     ../qtkHttpServer/qtkHttpServer.h \
-    ../qtkHttpServer/qtkMjpgStreamer.h
+    ../qtkHttpServer/qtkMjpgStreamer.h \
+    ../qtkHttpServer/qtkJsRpcServer.h \
+    ../qtkHttpServer/qtkHttpCommon.h \
+    ../rpcCommands/qtkRtpCommandsInit.h \
+    ../qtkHttpServer/qtkRtpCommand_.h \
+    ../rpcCommands/qtkRtpCommand_Test.h \
+    ../rpcCommands/qtkRtpCommand_Settings.h \
+    ../rpcCommands/qtkRtpCommand_headers.h
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

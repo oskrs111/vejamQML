@@ -12,9 +12,25 @@ QtkVideoServer::QtkVideoServer(QtKApplicationParameters *params, QObject *parent
     this->m_camera = 0;
     this->m_videoFilter = 0;
     this->m_appParameters = params;
+    this->loadSettings();
+}
+
+void QtkVideoServer::loadSettings()
+{
     this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirror-setting")).toInt();
-    this->m_widthScale = this->loadParam(QString("video"),QString("resolucion-x")).toInt();
+    this->m_widthScale = this->loadParam(QString("video"),QString("max-width")).toInt();
     this->m_scaleMode = this->loadParam(QString("video"),QString("scale-mode")).toInt();
+    this->m_videoQuality = this->loadParam(QString("video"),QString("quality")).toInt();
+    this->m_frameDrop = this->loadParam(QString("video"),QString("frame-drop")).toInt();
+    this->m_streamAlias = this->loadParam(QString("aplicacion"),QString("streamming-alias"));
+    this->m_streamAliasShowTitle = this->loadParam(QString("aplicacion"),QString("osd-show-title")).toInt();
+    this->m_streamAliasShowTime = this->loadParam(QString("aplicacion"),QString("osd-show-time")).toInt();
+    this->m_streamAliasXpos = this->loadParam(QString("aplicacion"),QString("osd-x-position")).toInt();
+    this->m_streamAliasYpos = this->loadParam(QString("aplicacion"),QString("osd-y-position")).toInt();
+    this->m_streamAliasFont = this->loadParam(QString("aplicacion"),QString("osd-text-font"));
+    this->m_streamAliasFontSize = this->loadParam(QString("aplicacion"),QString("osd-text-font-size")).toInt();
+    this->m_streamAliasFontWeight = this->loadParam(QString("aplicacion"),QString("osd-text-font-weight")).toInt();
+    this->m_streamAliasFontColor = this->loadParam(QString("aplicacion"),QString("osd-text-font-color")).toInt(0,16);
 }
 
 void QtkVideoServer::setVideoFilter(qtkVideoFilter* videoFilter)
@@ -36,39 +52,6 @@ int QtkVideoServer::getServerState()
     }
     else return 0;
 }
-
-//void QtkVideoServer::OnFilterCapturedImage(QImage frame)
-//{
-//    m_mutexA.lock();
-//    QVideoFrame tFrame = frame;
-//    if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
-//    {
-//        if(this->m_widthScale == 0) this->m_widthScale = tFrame.width();
-//        switch(this->m_mirrorSetting)
-//        {
-//            case mirrorVertical:
-//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-//                break;
-
-//            case mirrorHorizontal:
-//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-//                break;
-
-//            case mirrorAll:
-//                this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-//                break;
-
-//            case mirrorNone:
-//            default:
-//            this->m_currentFrame = QImage(tFrame.bits(), tFrame.width(), tFrame.height(), tFrame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-//            break;
-//        }
-//        tFrame.unmap();
-//    }
-//    m_mutexA.unlock();
-//    emit frameUpdated();
-//    //qDebug() << "QtkVideoServer::OnFilterCapturedImage";
-//}
 
 void QtkVideoServer::OnFilterCapturedImage(QImage frame)
 {
@@ -104,9 +87,22 @@ void QtkVideoServer::OnFilterCapturedImage(QImage frame)
     {
         this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer);
     }
+
     QDateTime time =  QDateTime::currentDateTime();
-    this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
-    this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
+    QFont font = QFont(this->m_streamAliasFont, this->m_streamAliasFontSize, this->m_streamAliasFontWeight);
+    QPen pen = QPen(this->m_streamAliasFontColor);
+    if((this->m_streamAliasShowTime > 0) && (this->m_streamAliasShowTitle > 0))
+    {
+        if(this->m_streamAliasShowTime > 0)
+        {
+            this->m_streamAlias.append(time.toString(" dd.MM.yyyy - hh:mm:ss.zzz"));
+        }
+
+        this->osdTextWrite(&this->m_currentFrame,
+                           this->m_streamAlias,
+                           this->m_streamAliasXpos,
+                           this->m_streamAliasYpos, font, pen);
+    }
     m_mutexA.unlock();
     emit frameUpdated();
 }
@@ -126,7 +122,7 @@ QByteArray QtkVideoServer::currentFrame2Base64Jpeg()
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
     m_mutexA.lock();		
-    this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());    
+    this->m_currentFrame.save( &buffer, "JPG", this->m_videoQuality);
     m_mutexA.unlock();
     buffer.close();
 	return ba.toBase64();
@@ -138,7 +134,7 @@ QByteArray QtkVideoServer::currentFrame2ByteArrayJpeg()
     QBuffer buffer(&ba);	
     buffer.open(QBuffer::WriteOnly);    
     m_mutexA.lock();	
-    this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
+    this->m_currentFrame.save( &buffer, "JPG", this->m_videoQuality);
     m_mutexA.unlock();
     buffer.close();
     return ba;
@@ -178,10 +174,10 @@ QString QtkVideoServer::loadParam(QString groupName, QString paramName, quint16 
 	return 0;
 }
 
-void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yPos)
+void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yPos, QFont font, QPen pen)
 {	
     QPainter p(img);
-	p.setPen(QPen(Qt::blue));
-	p.setFont(QFont("Times", 14, QFont::Bold));	
+    p.setPen(pen);
+    p.setFont(font);
 	p.drawText(QPoint(xPos, yPos), osdText); 
 }
