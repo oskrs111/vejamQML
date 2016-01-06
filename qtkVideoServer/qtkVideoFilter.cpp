@@ -38,16 +38,26 @@ QVideoFrame qtkVideoFilterRunable::run(QVideoFrame *input, const QVideoSurfaceFo
     if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
     {
 //https://forum.qt.io/topic/46912/how-to-get-a-frame-image-from-qcamera/2
+        if(tFrame.pixelFormat() ==  QVideoFrame::Format_BGR32){
         this->m_currentFrame = QImage(tFrame.bits(),
                                       tFrame.width(),
                                       tFrame.height(),
                                       tFrame.bytesPerLine(),
-                                      //QVideoFrame::imageFormatFromPixelFormat(tFrame.pixelFormat())).copy(QRect());
+                                      this->qPixel2QImageFormat(tFrame.pixelFormat())).rgbSwapped().copy(QRect());
+
+        }
+        else{
+        this->m_currentFrame = QImage(tFrame.bits(),
+                                      tFrame.width(),
+                                      tFrame.height(),
+                                      tFrame.bytesPerLine(),                                      
                                       this->qPixel2QImageFormat(tFrame.pixelFormat())).copy(QRect());
+        }
         tFrame.unmap();
+        this->p_parent->frameUpdated(this->m_currentFrame.copy(QRect()));
     }
     //this->m_mutexA.unlock();
-    this->p_parent->frameUpdated(this->m_currentFrame.copy(QRect()));
+
     return *input;
 }
 

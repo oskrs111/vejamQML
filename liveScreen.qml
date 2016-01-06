@@ -8,8 +8,19 @@ import qtkvideofilter.uri 1.0
 Rectangle {
     id: liveForm
     readonly property real dip: 1//Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
-    width: Screen.desktopAvailableWidth*_dip
-    height: Screen.desktopAvailableHeight*_dip
+    //width: (platform.os === "android" ? Screen.desktopAvailableWidth*_dip : 460)
+    //height: (platform.os === "android" ? Screen.desktopAvailableWidth*_dip : 800)
+
+    Component.onCompleted:{
+        if(Qt.platform.os === "android"){
+            liveForm.width = Screen.desktopAvailableWidth*_dip;
+            liveForm.height = Screen.desktopAvailableHeight*_dip;
+        }
+        else{
+            liveForm.width = 460*_dip;
+            liveForm.height = 800*_dip;
+        }
+    }
 
     Grid {
          id: gridTop
@@ -62,6 +73,11 @@ Rectangle {
     Camera {
         id: camera
         objectName: "camera.device"
+        Component.onCompleted:{
+            if(Qt.platform.os === "android"){
+                camera.Rotation = 90
+            }
+
     }
 
     VideoOutput{
