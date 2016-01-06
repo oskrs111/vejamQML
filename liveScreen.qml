@@ -77,7 +77,7 @@ Rectangle {
             if(Qt.platform.os === "android"){
                 camera.Rotation = 90
             }
-
+        }
     }
 
     VideoOutput{

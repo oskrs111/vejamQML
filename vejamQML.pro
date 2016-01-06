@@ -40,8 +40,8 @@ DISTFILES += \
 INCLUDEPATH += qtkVideoServer \
             ./../qtkApplicationParameters \
             ./../qtkHttpServer \
-            ./../config \
-            ./../rpcCommands \
+            config \
+            rpcCommands \
             qtkImageProvider
 
 
@@ -59,8 +59,8 @@ HEADERS += \
     ../qtkHttpServer/qtkHttpCommon.h \
     ../rpcCommands/qtkRtpCommandsInit.h \
     ../qtkHttpServer/qtkRtpCommand_.h \
-    ../rpcCommands/qtkRtpCommand_Test.h \
-    ../rpcCommands/qtkRtpCommand_Settings.h \
-    ../rpcCommands/qtkRtpCommand_headers.h
+    rpcCommands/qtkRtpCommand_Test.h \
+    rpcCommands/qtkRtpCommand_Settings.h \
+    rpcCommands/qtkRtpCommand_headers.h
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
