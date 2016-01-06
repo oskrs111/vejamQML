@@ -17,8 +17,7 @@ QtkVideoServer::QtkVideoServer(QtKApplicationParameters *params, QObject *parent
 
 void QtkVideoServer::loadSettings()
 {
-    this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirror-setting")).toInt();
-    this->m_widthScale = this->loadParam(QString("video"),QString("max-width")).toInt();
+    this->m_mirrorSetting = this->loadParam(QString("video"),QString("mirror-setting")).toInt();    
     this->m_scaleMode = this->loadParam(QString("video"),QString("scale-mode")).toInt();
     this->m_videoQuality = this->loadParam(QString("video"),QString("quality")).toInt();
     this->m_frameDrop = this->loadParam(QString("video"),QString("frame-drop")).toInt();
@@ -78,15 +77,8 @@ void QtkVideoServer::OnFilterCapturedImage(QImage frame)
        break;
     }
 
-    m_mutexA.lock();
-    if(this->m_widthScale)
-    {
-        this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
-    }
-    else
-    {
-        this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer);
-    }
+    this->m_mutexA.lock();
+    this->m_currentFrame = frame.copy(QRect()).mirrored(mHor, mVer);
 
     QDateTime time =  QDateTime::currentDateTime();
     QFont font = QFont(this->m_streamAliasFont, this->m_streamAliasFontSize, this->m_streamAliasFontWeight);
@@ -103,16 +95,16 @@ void QtkVideoServer::OnFilterCapturedImage(QImage frame)
                            this->m_streamAliasXpos,
                            this->m_streamAliasYpos, font, pen);
     }
-    m_mutexA.unlock();
+    this->m_mutexA.unlock();
     emit frameUpdated();
 }
 
 QImage QtkVideoServer::currentFrame2Image()
 {
     QImage lastFrame;
-    m_mutexA.lock();
+    this->m_mutexA.lock();
     lastFrame = this->m_currentFrame.copy(QRect());
-    m_mutexA.unlock();
+    this->m_mutexA.unlock();
     return lastFrame;
 }
 
@@ -121,9 +113,9 @@ QByteArray QtkVideoServer::currentFrame2Base64Jpeg()
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
-    m_mutexA.lock();		
+    this->m_mutexA.lock();
     this->m_currentFrame.save( &buffer, "JPG", this->m_videoQuality);
-    m_mutexA.unlock();
+    this-> m_mutexA.unlock();
     buffer.close();
 	return ba.toBase64();
 }
@@ -133,9 +125,9 @@ QByteArray QtkVideoServer::currentFrame2ByteArrayJpeg()
     QByteArray ba;
     QBuffer buffer(&ba);	
     buffer.open(QBuffer::WriteOnly);    
-    m_mutexA.lock();	
+    this->m_mutexA.lock();
     this->m_currentFrame.save( &buffer, "JPG", this->m_videoQuality);
-    m_mutexA.unlock();
+    this->m_mutexA.unlock();
     buffer.close();
     return ba;
 }

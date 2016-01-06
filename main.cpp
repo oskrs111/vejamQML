@@ -98,12 +98,11 @@ void setDefaultParameters()
     gParams->saveParam(QString("aplicacion"),QString("root-path"),QString(":/3w/"));
     gParams->saveParam(QString("conexion"),QString("mjpeg-port"),QString("50001"));
     gParams->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/stream.html"));
-    gParams->saveParam(QString("video"),QString("max-width"),QString("0"));
+    gParams->saveParam(QString("video"),QString("scale-width"),QString("50"));
+    gParams->saveParam(QString("video"),QString("scale-height"),QString("50"));
     gParams->saveParam(QString("video"),QString("scale-mode"),QString("0"));
     gParams->saveParam(QString("video"),QString("quality"),QString("-1"));
     gParams->saveParam(QString("video"),QString("framerate-max"),QString("24"));
-    gParams->saveParam(QString("video"),QString("mirror-setting"),QString("0"));
-    gParams->saveParam(QString("video"),QString("frame-drop"),QString("6"));
     gParams->saveParam(QString("video"),QString("osd-show-title"),QString("1"));
     gParams->saveParam(QString("video"),QString("osd-show-time"),QString("1"));
     gParams->saveParam(QString("video"),QString("osd-x-position"),QString("10"));
@@ -115,6 +114,11 @@ void setDefaultParameters()
     gParams->saveParam(QString("video"),QString("device"),QString("0"));	//OSLL: Default video (camera) source.
 #ifdef ANDROID_PLATFORM
     gParams->saveParam(QString("video-extras"),QString("torch"),QString("0"));	//OSLL: Default torch (flash) state.
+    gParams->saveParam(QString("video"),QString("mirror-setting"),QString("0"));
+    gParams->saveParam(QString("video"),QString("frame-drop"),QString("3"));
+#else
+    gParams->saveParam(QString("video"),QString("mirror-setting"),QString("2"));
+    gParams->saveParam(QString("video"),QString("frame-drop"),QString("1"));
 #endif
     gParams->fileSave();
 }

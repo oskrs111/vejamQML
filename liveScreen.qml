@@ -17,7 +17,7 @@ Rectangle {
             liveForm.height = Screen.desktopAvailableHeight*_dip;
         }
         else{
-            liveForm.width = 460*_dip;
+            liveForm.width = 460*_dip;            
             liveForm.height = 800*_dip;
         }
     }
@@ -74,9 +74,12 @@ Rectangle {
         id: camera
         objectName: "camera.device"
         Component.onCompleted:{
-            if(Qt.platform.os === "android"){
-                camera.Rotation = 90
-            }
+//            if(Qt.platform.os === "android"){
+//
+//            }
+//            else if(Qt.platform.os === "windows"){
+//                camera. = 180;
+//            }
         }
     }
 
@@ -84,10 +87,22 @@ Rectangle {
         id: vout
         y: 49*dip
         source: camera
-        filters: [qtkFilter]
-        width: parent.width
-        height: parent.width / 1.3
+        filters: [qtkFilter]        
         anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width
+        height: parent.width / 1.3                
+        Component.onCompleted:{
+            if(Qt.platform.os === "android"){
+                vout.orientation = 270;
+                //vout.width = parent.width  / 1.3;
+                vout.height = liveForm.width;
+            }
+//            else if(Qt.platform.os === "windows"){
+//                vout.orientation = 0;
+//                vout.width = parent.width;
+//                vout.height = parent.width / 1.3;
+//            }
+        }
     }
 
     VideoFilter{

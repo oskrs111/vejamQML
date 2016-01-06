@@ -8,9 +8,26 @@
 class qtkVideoFilter : public QAbstractVideoFilter 
 {
 	Q_OBJECT
-public:
+public:    
     QVideoFilterRunnable *createFilterRunnable();
+
     void frameUpdated(QImage frame);
+    void setRotationAngle(int angle);
+    void setScaleX(int sx);
+    void setScaleY(int sy);    
+    void setFrameDropper(quint8 frames);
+
+    qreal getRotationAngle();
+    qreal getScaleX();    
+    qreal getScaleY();
+    quint8 getFrameDropper();
+
+private:
+    qreal m_rotationAngle;
+    qreal m_scaleX;
+    qreal m_scaleY;
+    quint8 m_frameDropper;
+    QMutex m_mutexA;
 
 signals:
     void finished(QObject *result);

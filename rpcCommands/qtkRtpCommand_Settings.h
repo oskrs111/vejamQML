@@ -70,7 +70,7 @@ inline void qtkRtpCommand_Settings::CommandInit()
 }
 
 inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId)
-//{"jsonrpc": "2.0", "method": "settings", "params":{"command":"getList"}, id": 3}
+//{"jsonrpc": "2.0", "method": "settings", "params":{"command":"getList"}, "id": 3}
 {    
     QString result;
     QString data;
@@ -117,9 +117,14 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
             data.append(pi.toJson()).append(QString(","));
 
             category = QString("video");
-            name = QString("max-width");
+            name = QString("scale-width");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("320;800"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitNumber);
+            data.append(pi.toJson()).append(QString(","));
+
+            name = QString("scale-height");
+            value = this->p_params->loadParam(category, name,0);
+            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitNumber);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("scale-mode");
