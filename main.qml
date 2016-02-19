@@ -4,6 +4,7 @@ import QtQuick.Controls 1.3
 
 ApplicationWindow {
     id: mainWindow
+    objectName: "main.window"
     readonly property real _dip: 1//Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
 
     Component.onCompleted:{
@@ -30,7 +31,7 @@ ApplicationWindow {
         id: myLoader
         anchors.horizontalCenter: parent.horizontalCenter
           objectName: "qml.Loader"
-          //source: "qrc:/loginScreen.qml"
-          source: "qrc:/liveScreen.qml"
+          source: "qrc:/loginScreen.qml"
+          //source: "qrc:/liveScreen.qml"
       }
 }

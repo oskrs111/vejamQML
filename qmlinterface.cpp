@@ -1,11 +1,11 @@
 #include "qmlinterface.h"
+#include "main.h"
 
 qmlInterface::qmlInterface(QObject *parent) : QObject(parent)
 {
     this->p_engine = 0;
     this->p_videoSource = 0;
     this->p_imageProvider = 0;
-
     this->p_timer = new QTimer(this);
     connect(this->p_timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     this->p_timer->start(50);
@@ -74,6 +74,11 @@ QObject* qmlInterface::getQmlVideoFilter()
     return 0;
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void qmlInterface::_TRACE(QString log)
+{
+    qDebug() << log;
+}
+
 void qmlInterface::onLoginButton()
 {
     qDebug() << "OnLoginButton()";
@@ -104,13 +109,26 @@ void qmlInterface::onLoginButton()
             QObject *loader = root[0]->findChild<QObject*>(QString("qml.Loader"));
             QQmlProperty::write(loader, QString("source"), QVariant(QString("qrc:/liveScreen.qml")), this->p_engine);
 
+            _globalStartServices();
         }
+    }
+}
+
+void qmlInterface::onRunButton()
+{
+    qDebug() << "OnRunButton()";
+    if(this->p_engine)
+    {
+        QList<QObject*> root = this->p_engine->rootObjects();
+        QObject *loader = root[0]->findChild<QObject*>(QString("qml.Loader"));
+        QQmlProperty::write(loader, QString("source"), QVariant(QString("qrc:/liveScreen.qml")), this->p_engine);
+        _globalStartServices();
     }
 }
 
 void qmlInterface::onFrameUpdated()
 {
-    static quint8 div = 0;
+//    static quint8 div = 0;
 //    m_mutexA.lock();
 //    if((this->p_imageProvider != 0) && (this->p_videoSource != 0))
 //    {
@@ -138,12 +156,41 @@ void qmlInterface::onTimer()
 
 void qmlInterface::writeLog(QString log)
 {
-    QVariant returnedValue;
-    QList<QObject*> root = this->p_engine->rootObjects();
-    QObject *text = root[0]->findChild<QObject*>(QString("text.log"));
-    QMetaObject::invokeMethod(text, "append",
-             Q_RETURN_ARG(QVariant, returnedValue),
-             Q_ARG(QVariant, log));
-
+    if(this->p_engine)
+    {
+        QVariant returnedValue;
+        QList<QObject*> root = this->p_engine->rootObjects();
+        if(root.size() > 0)
+        {
+            QObject *text = root[0]->findChild<QObject*>(QString("text.log"));
+            QMetaObject::invokeMethod(text, "append",
+                     Q_RETURN_ARG(QVariant, returnedValue),
+                     Q_ARG(QVariant, log));
+        }
+    }
 
 }
+
+void qmlInterface::onRemoteRequest(int type)
+{
+    #ifdef WINDOWS_PLATFORM
+    Q_UNUSED(type);
+    if(this->p_engine)
+    {
+        QVariant returnedValue;
+        QList<QObject*> root = this->p_engine->rootObjects();
+        QObject *mainWindow = root[0];
+        QVariant flags = QQmlProperty::read(mainWindow, QString("flags"), this->p_engine);
+        int iflags = flags.toInt();
+        iflags |= Qt::WindowStaysOnTopHint;
+        QQmlProperty::write(mainWindow, QString("flags"), QVariant(iflags), this->p_engine);
+        QQmlProperty::write(mainWindow, QString("flags"), flags, this->p_engine);
+        //QMetaObject::invokeMethod(mainWindow, "raise");
+        qDebug() << "onRemoteRequest()" << mainWindow;
+
+    }
+    #endif
+}
+
+
+

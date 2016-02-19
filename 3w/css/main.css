@@ -67,9 +67,9 @@ p {
 #sec_menuDialog
 {
 	right: 5px;
-    width: 40%;
+    width: 25%;
     height: 95vh;
-    min-width: 400px;
+    min-width: 350px;
     margin: 0px;
 	margin-top: 5px;
     padding: 5px;
@@ -99,16 +99,16 @@ p {
 #div_dialogContentWraper
 {
 	width: 99%;
-	height: 94%;
+	/*height: 94%;*/
 	margin: auto;
 	padding: 0;
-	overflow:scroll;
+	overflow:hidden;
 }
 
 #div_dialogContent
 {
 	width: 95%;
-	height: 650px;
+	/*height: 650px;*/
 	margin: 1%;
 }
 /**********************************/

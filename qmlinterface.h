@@ -1,6 +1,5 @@
 #ifndef QMLINTERFACE_H
 #define QMLINTERFACE_H
-
 #include <QObject>
 #include <QQuickItem>
 #include <QQmlContext>
@@ -17,10 +16,6 @@
 //http://wisol.ch/w/articles/2014-12-15-qt-signal-slots-qml-cpp/
 
 
-
-
-
-
 class qmlInterface : public QObject
 {
     Q_OBJECT
@@ -29,6 +24,9 @@ public:
     void setEngine(QQmlApplicationEngine* engine);
     void setVideoSource(QtkVideoServer* videoSource);
     void setImageProvider(qtkImageProvider* imageProvider);
+#ifdef WINDOWS_PLATFORM
+    void setApplication(QApplication* app);
+#endif
     void updateTextState();
     void writeLog(QString log);
 
@@ -47,9 +45,12 @@ private:
 signals:
 
 public slots:
+    void _TRACE(QString log);
     void onLoginButton();
+    void onRunButton();
     void onFrameUpdated();
     void onTimer();
+    void onRemoteRequest(int type);
 };
 
 #endif // QMLINTERFACE_H

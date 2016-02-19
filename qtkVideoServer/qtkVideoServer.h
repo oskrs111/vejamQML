@@ -15,10 +15,9 @@ class QtkVideoServer : public QObject
 public:
     explicit QtkVideoServer(QtKApplicationParameters* params, QObject *parent = 0);
     void setVideoFilter(qtkVideoFilter* videoFilter);
-    void setCamera(QCamera* camera);
-
+    void setCamera(QCamera* camera);    
     void startServer();	
-    void Capture();
+    void loadSettings();
     int getServerState();
     void osdTextWrite(QImage* img, QString osdText, int xPos, int yPos, QFont font, QPen pen);
 
@@ -39,8 +38,7 @@ private:
     int m_mirrorSetting;
     int m_widthScale;
     int m_scaleMode;
-    int m_videoQuality;
-    int m_frameDrop;
+    int m_videoQuality;    
     int m_streamAliasXpos;
     int m_streamAliasYpos;
     int m_streamAliasShowTitle;
@@ -49,8 +47,9 @@ private:
     int m_streamAliasFontWeight;
     int m_streamAliasFontColor;
     QString m_streamAlias;
-    QString m_streamAliasFont;
-    void loadSettings();
+    QString m_streamAliasFont;    
+    void updateVideoFilterSettings();
+    void updateNativeCameraSettings();
 //OSLL: Variables for settings - END
 
     QImage m_currentFrame;
@@ -69,6 +68,7 @@ public slots:
     void OnDisplayCaptureError(int id,QCameraImageCapture::Error error, QString errorString);
     void OnUpdateCameraState(QCamera::State state);
     void OnDisplayCameraError(QCamera::Error error);
+    void OnFilterReady();
 };
 
 struct vjCameraDevice

@@ -1,0 +1,46 @@
+.rpcParameter
+{
+    font-family: Tahoma, Verdana, Segoe, sans-serif;    
+    font-style: normal;
+    font-variant: normal;  
+    min-height: 2em;
+}
+
+.rpcParameter input
+{
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: black;
+    font-weight: 600;
+    width: 6em;
+}
+
+.rpcParameter input:hover
+{
+    background-color: white;
+}
+
+.rpcParameter label
+{
+    min-width: 12em;
+    display: inline-block;
+    text-align: right;
+    margin-right: 1em;
+    vertical-align: top;
+    padding-top: 5px;    
+}
+
+.rpcUpdateBk
+{
+    background-color: yellow !important;
+}
+
+.rpcSuccessBk
+{
+    background-color: greenyellow !important;   
+}
+
+.rpcFailBk
+{
+    background-color: red !important;
+}

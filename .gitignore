@@ -32,3 +32,4 @@ Makefile*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+/3w/nbproject/private/

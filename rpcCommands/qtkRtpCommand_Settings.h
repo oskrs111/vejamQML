@@ -13,9 +13,11 @@ public:
     enum pItemTypes
     {
         pitBinary = 0,
-        pitNumber,
+        pitDecimal,
+        pitHexaDecimal,
         pitString,
-        pitOption
+        pitOption,
+        pitReply = 200
     };
 
     void setItem(QString name, QString category, QString value, QString csvOptions, quint8 type)
@@ -97,12 +99,12 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
             category = QString("aplicacion");
             name = QString("sync-interval");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;3600"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;3600"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("streamming-id");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;8"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("0;8"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("streamming-alias");
@@ -113,35 +115,52 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
             category = QString("conexion");
             name = QString("mjpeg-port");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1024;65000"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1024;65000"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             category = QString("video");
+            name = QString("device");
+            value = this->p_params->loadParam(category, name,0);
+            pi.setItem(name, category, value, QString("0;1"), qtkParameterItem::pitDecimal);
+            data.append(pi.toJson()).append(QString(","));
+
             name = QString("scale-width");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("scale-height");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;200"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("scale-mode");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;1"), qtkParameterItem::pitOption);
+            pi.setItem(name, category, value, QString("0;1"), qtkParameterItem::pitBinary);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("quality");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("-1;100"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("-1;100"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
+            name = QString("rotation-angle");
+            value = this->p_params->loadParam(category, name,0);
+            pi.setItem(name, category, value, QString("-180;180"), qtkParameterItem::pitDecimal);
+            data.append(pi.toJson()).append(QString(","));
+
+            name = QString("mirror-setting");
+            value = this->p_params->loadParam(category, name,0);
+            pi.setItem(name, category, value, QString("0;2"), qtkParameterItem::pitDecimal);
+            data.append(pi.toJson()).append(QString(","));
+
+
+/*
             name = QString("framerate-max");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;24"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;24"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
-
+*/
             name = QString("mirror-setting");
             value = this->p_params->loadParam(category, name,0);
             pi.setItem(name, category, value, QString("0;3"), qtkParameterItem::pitOption);
@@ -149,7 +168,7 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
 
             name = QString("frame-drop");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;23"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("0;23"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("osd-show-title");
@@ -164,12 +183,12 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
 
             name = QString("osd-x-position");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;1000"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("0;1000"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("osd-y-position");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;1000"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("0;1000"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("osd-text-font");
@@ -181,17 +200,17 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
 
             name = QString("osd-text-font-size");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;100"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;100"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("osd-text-font-weight");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("1;100"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("1;100"), qtkParameterItem::pitDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("osd-text-font-color");
             value = this->p_params->loadParam(category, name,0);
-            pi.setItem(name, category, value, QString("0;16777215"), qtkParameterItem::pitNumber);
+            pi.setItem(name, category, value, QString("0;FFFFFFFF"), qtkParameterItem::pitHexaDecimal);
             data.append(pi.toJson()).append(QString(","));
 
             name = QString("device");
@@ -210,6 +229,20 @@ inline void qtkRtpCommand_Settings::CommandExecute(QJsonObject params, int seqId
 
         data.append(QString("]"));
 		}
+        else if(command.compare(QString("update")) == 0)
+        //{"jsonrpc": "2.0", "method": "settings", "params":{"command":"update", "param":"framerate-max", "value":"24"}, "id": 4}
+        {
+            qtkParameterItem pi;
+            QString name = params.take("pName").toString();
+            QString value = params.take("pValue").toString();
+            QString category = params.take("pCategory").toString();
+            this->p_params->saveParam(category, name, value, 0);
+            pi.setItem(name, category, value, QString(""), qtkParameterItem::pitReply);
+            data.append(pi.toJson());
+
+            //OSLL: Maybe there's a better way to do this...?
+            _globalUpdateApplicationSettings();
+        }
         else
         {
             goto _commandNotFound;

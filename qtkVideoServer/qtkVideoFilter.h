@@ -32,6 +32,7 @@ private:
 signals:
     void finished(QObject *result);
     void frameReady(QImage frame);
+    void filterReady();
 };
 
 

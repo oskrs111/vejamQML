@@ -33,5 +33,13 @@
         <file>3w/js/jquery.min.map</file>
         <file>3w/js/main.js</file>
         <file>3w/img/exit-to-app.png</file>
+        <file>3w/js/rpcParameter/css/rpcParameter.css</file>
+        <file>3w/js/rpcParameter/js/rpcParameter.js</file>
+        <file>3w/js/tinytoggle/css/tiny-toggle.css</file>
+        <file>3w/js/tinytoggle/fonts/tinytoggle.eot</file>
+        <file>3w/js/tinytoggle/fonts/tinytoggle.svg</file>
+        <file>3w/js/tinytoggle/fonts/tinytoggle.ttf</file>
+        <file>3w/js/tinytoggle/fonts/tinytoggle.woff</file>
+        <file>3w/js/tinytoggle/js/tiny-toggle.js</file>
     </qresource>
 </RCC>

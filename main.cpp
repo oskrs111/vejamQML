@@ -1,4 +1,8 @@
+#ifdef WINDOWS_PLATFORM
+#include <QApplication>
+#else
 #include <QGuiApplication>
+#endif
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include "main.h"
@@ -18,41 +22,57 @@ QtKApplicationParameters* __getApplicationParams()
 
 int main(int argc, char *argv[])
 {
+#ifdef WINDOWS_PLATFORM
+    QApplication app(argc, argv);
+#else
     QGuiApplication app(argc, argv);
-    QQmlApplicationEngine engine;
+#endif
 
+    loadParams();
+    qInstallMessageHandler(debugLogger);
+
+    QQmlApplicationEngine engine;    
     qmlRegisterType<qtkVideoFilter>("qtkvideofilter.uri", 1, 0, "VideoFilter");
+
     gInterface = new qmlInterface();
-    gImageProvider = new qtkImageProvider(QQmlImageProviderBase::Image);
     gInterface->setEngine(&engine);
+    gImageProvider = new qtkImageProvider(QQmlImageProviderBase::Image);
+    gInterface->setImageProvider(gImageProvider);    
 
     engine.addImageProvider(QString("imageProvider"),gImageProvider);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    //startServices();
+    return app.exec();
+}
 
-    loadParams();
-
-    qInstallMessageHandler(debugLogger);
-
-    gInterface->setImageProvider(gImageProvider);
+void _globalStartServices()
+{
     gVideoServer = new QtkVideoServer(gParams, 0);
-
     gHttpServer = new QtkHttpServer(gParams->loadParam(QString("conexion"),QString("mjpeg-port"),0).toInt(0,10), 0);
     gHttpServer->setFilesRootPath(gParams->loadParam(QString("aplicacion"),QString("root-path"),0));
     gHttpServer->setVideoServer(gVideoServer);
     gHttpServer->setMaxFramerate(gParams->loadParam(QString("video"),QString("framerate-max"),0).toInt(0,10));
+
+    QObject::connect(gHttpServer, SIGNAL(remoteRequest(int)), gInterface, SLOT(onRemoteRequest(int)));
 
     QCamera* cam = qvariant_cast<QCamera*>(gInterface->getQmlCamera()->property("mediaObject"));
     gVideoServer->setCamera(cam);
 
     QObject* filter = gInterface->getQmlVideoFilter();
     gVideoServer->setVideoFilter((qtkVideoFilter*)filter);
-
-
-    gInterface->setVideoSource(gVideoServer);
-    gInterface->setImageProvider(gImageProvider);
+    gInterface->setVideoSource(gVideoServer);    
     QObject::connect(gVideoServer, SIGNAL(frameUpdated()), gInterface, SLOT(onFrameUpdated()));
+    //OSLL: Re-load settings to update VideoFilter and NativeCamera settings.
+    gVideoServer->loadSettings();
+}
 
-    return app.exec();
+void _globalUpdateApplicationSettings()
+{
+    if(gVideoServer)
+    {
+        gVideoServer->loadSettings();
+    }
+    gParams->fileSave();
 }
 
 #ifdef ANDROID_PLATFORM_EXTRAS
@@ -81,11 +101,6 @@ void loadParams()
     }
 }
 
-quint8 servicesStart()
-{
-    return 1;
-}
-
 void setDefaultParameters()
 {
     gParams->saveParam(QString("aplicacion"),QString("username"),QString("user@name.here"));
@@ -95,9 +110,9 @@ void setDefaultParameters()
     gParams->saveParam(QString("aplicacion"),QString("streamming-alias"),QString("My Webcam!")); //1...8
     gParams->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
     gParams->saveParam(QString("aplicacion"),QString("file-log"),QString("0"));
-    gParams->saveParam(QString("aplicacion"),QString("root-path"),QString(":/3w/"));
+    gParams->saveParam(QString("aplicacion"),QString("root-path"),QString(":/3w"));
     gParams->saveParam(QString("conexion"),QString("mjpeg-port"),QString("50001"));
-    gParams->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/stream.html"));
+    gParams->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/index.html"));
     gParams->saveParam(QString("video"),QString("scale-width"),QString("50"));
     gParams->saveParam(QString("video"),QString("scale-height"),QString("50"));
     gParams->saveParam(QString("video"),QString("scale-mode"),QString("0"));
@@ -116,9 +131,11 @@ void setDefaultParameters()
     gParams->saveParam(QString("video-extras"),QString("torch"),QString("0"));	//OSLL: Default torch (flash) state.
     gParams->saveParam(QString("video"),QString("mirror-setting"),QString("0"));
     gParams->saveParam(QString("video"),QString("frame-drop"),QString("3"));
+    gParams->saveParam(QString("video"),QString("rotation-angle"),QString("0"));
 #else
     gParams->saveParam(QString("video"),QString("mirror-setting"),QString("2"));
     gParams->saveParam(QString("video"),QString("frame-drop"),QString("1"));
+    gParams->saveParam(QString("video"),QString("rotation-angle"),QString("180"));
 #endif
     gParams->fileSave();
 }

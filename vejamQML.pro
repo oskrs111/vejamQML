@@ -22,6 +22,11 @@ android {
 DEFINES += ANDROID_PLATFORM
 }
 
+windows {
+QT += widgets
+DEFINES += WINDOWS_PLATFORM
+}
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 

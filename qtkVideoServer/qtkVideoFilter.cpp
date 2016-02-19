@@ -9,6 +9,7 @@ QVideoFilterRunnable *qtkVideoFilter::createFilterRunnable()
     this->m_scaleY = (qreal)0.5;
     this->m_frameDropper = 0;
 
+    emit filterReady();
     return new qtkVideoFilterRunable(this);
 }
 

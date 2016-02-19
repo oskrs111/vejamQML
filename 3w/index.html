@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
 	<meta charset="UTF-8">
     <title>VEJAM MJPEG Streamer!</title>  
 	<link rel="stylesheet" href="css/main.css">
-	<script type="text/javascript" src="/js/jquery.min.js"></script>
+        <link rel="stylesheet" href="/js/tinytoggle/css/tiny-toggle.css">
+        <link rel="stylesheet" href="/js/rpcParameter/css/rpcParameter.css">        
+	<script type="text/javascript" src="/js/jquery.min.js"></script>        
 	<script type="text/javascript" src="/js/main.js"></script>
+        <script type="text/javascript" src="/js/rpcParameter/js/rpcParameter.js"></script>
+        <script type="text/javascript" src="/js/tinytoggle/js/tiny-toggle.js"></script>
 	
   </head>
   <body background="/stream.mjpg" style="background-repeat: no-repeat; background-size: cover;">
@@ -18,8 +22,10 @@
   <div id="div_dialogHeaderExit" class="opacity iblock" title="Close"></div>
   </div>
   <div id="div_dialogContentWraper">
-  <div id="div_dialogContent"></div>
+      <div id="div_dialogContent">
+          <ul id="div_dialogContentList"></ul>                
+      </div>
   </div>
-  </section>  
+  </section>    
   </body>
 </html>

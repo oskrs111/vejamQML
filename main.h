@@ -10,7 +10,8 @@
 QtKApplicationParameters* __getApplicationParams();
 void setDefaultParameters();
 void loadParams();
-quint8 servicesStart();
+void _globalStartServices();
+void _globalUpdateApplicationSettings();
 void debugLogger(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 #ifdef ANDROID_PLATFORM_EXTRAS
 void keepScreenOn()

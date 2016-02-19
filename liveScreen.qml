@@ -8,17 +8,14 @@ import qtkvideofilter.uri 1.0
 Rectangle {
     id: liveForm
     readonly property real dip: 1//Screen.pixelDensity / (96 / 25.4) // DPI norm in mm
-    //width: (platform.os === "android" ? Screen.desktopAvailableWidth*_dip : 460)
-    //height: (platform.os === "android" ? Screen.desktopAvailableWidth*_dip : 800)
-
     Component.onCompleted:{
         if(Qt.platform.os === "android"){
-            liveForm.width = Screen.desktopAvailableWidth*_dip;
-            liveForm.height = Screen.desktopAvailableHeight*_dip;
+            liveForm.width = Screen.desktopAvailableWidth*dip;
+            liveForm.height = Screen.desktopAvailableHeight*dip;
         }
         else{
-            liveForm.width = 460*_dip;            
-            liveForm.height = 800*_dip;
+            liveForm.width = 460*dip;
+            liveForm.height = 800*dip;
         }
     }
 
